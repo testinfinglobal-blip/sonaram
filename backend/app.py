@@ -3,7 +3,7 @@ import sqlite3
 import uuid
 import base64
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -14,8 +14,8 @@ from openai import OpenAI
 # =========================================
 
 load_dotenv()
+app = Flask(__name__, static_folder="../frontend", static_url_path="")
 
-app = Flask(__name__)
 CORS(app)
 
 
@@ -91,12 +91,9 @@ init_database()
 # =========================================
 # HOME
 # =========================================
-
 @app.route("/")
 def home():
-
-    return "My AI Backend is running with OpenRouter!"
-
+    return send_from_directory("../frontend", "index.html")
 
 # =========================================
 # HEALTH
