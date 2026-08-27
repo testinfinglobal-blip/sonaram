@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-top">
+
+            <div class="brand">
+                <div class="brand-icon">✦</div>
+
+                <div>
+                    <div class="brand-name">My AI</div>
+                    <div class="brand-subtitle">AI Assistant</div>
+                </div>
+            </div>
+
+            <button id="newChatButton" class="new-chat-button">
+                <span>＋</span>
+                <span>New chat</span>
+            </button>
+
+        </div>
+
+        <div class="history-section">
+
+            <div class="history-label">
+                Recent chats
+            </div>
+
+            <div id="chatHistory" class="chat-history"></div>
+
+        </div>
+
+        <div class="sidebar-bottom">
+
+            <button id="themeButton" class="sidebar-action">
+                <span id="themeIcon">☾</span>
+                <span id="themeText">Dark mode</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <section class="chat-section">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div class="header-left">
+
+                <div class="assistant-avatar">
+                    ✦
+                </div>
+
+                <div>
+                    <div class="header-title">
+                        My AI
+                    </div>
+
+                    <div class="online-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CHAT -->
+        <main id="chatBox" class="chat-box">
+
+            <div class="welcome-container">
+
+                <div class="welcome-icon">
+                    ✦
+                </div>
+
+                <h1>How can I help you?</h1>
+
+                <p>
+                    Ask me anything, write code, explain concepts,
+                    or help solve a problem.
+                </p>
+
+            </div>
+
+        </main>
+
+
+       <!-- INPUT -->
+<div class="input-wrapper">
+
+    <div
+        class="image-preview-container"
+        id="imagePreviewContainer">
+    </div>
+
+    <div class="input-container">
+
+        <button
+            id="attachButton"
+            class="attach-button"
+            type="button"
+            aria-label="Upload image"
+            title="Upload image">
+            📎
+        </button>
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/png,image/jpeg,image/webp"
+            hidden
+        >
+
+        <textarea
+            id="messageInput"
+            rows="1"
+            placeholder="Message My AI..."
+            autocomplete="off">
+        </textarea>
+
+        <button
+            id="sendButton"
+            class="send-button"
+            type="button"
+            aria-label="Send message">
+            ↑
+        </button>
+
+    </div>
+
+    <div class="input-hint">
+        <span>Enter to send</span>
+        <span>•</span>
+        <span>Shift + Enter for new line</span>
+    </div>
+
+</div>
+
+            <!-- HINT -->
+            <div class="input-hint">
+                <span>Enter to send</span>
+                <span>•</span>
+                <span>Shift + Enter for new line</span>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
