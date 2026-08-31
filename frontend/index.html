@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My AI</title>
+    <title>MeenAI</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ff6ec7'/><stop offset='100%25' stop-color='%233d5afe'/></linearGradient></defs><path d='M20 80 L20 30 Q20 20 30 20 L40 20 L50 40 L60 20 L70 20 Q80 20 80 30 L80 80 L70 80 L70 40 L60 60 L50 60 L40 40 L30 60 L30 80 Z' fill='url(%23g)'/></svg>">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,11 +21,21 @@
         <div class="sidebar-top">
 
             <div class="brand">
-                <div class="brand-icon">✦</div>
+                <!-- SVG Logo -->
+                <svg class="brand-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6ec7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#3d5afe;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 80 L20 30 Q20 20 30 20 L40 20 L50 40 L60 20 L70 20 Q80 20 80 30 L80 80 L70 80 L70 40 L60 60 L50 60 L40 40 L30 60 L30 80 Z" fill="url(#grad1)"/>
+                    <circle cx="50" cy="15" r="6" fill="url(#grad1)"/>
+                </svg>
 
                 <div>
-                    <div class="brand-name">My AI</div>
-                    <div class="brand-subtitle">AI Assistant</div>
+                    <div class="brand-name">MeenAI</div>
+                    <div class="brand-subtitle">Smart • Simple • Intelligent</div>
                 </div>
             </div>
 
@@ -65,13 +76,21 @@
 
             <div class="header-left">
 
-                <div class="assistant-avatar">
-                    ✦
-                </div>
+                <!-- SVG Logo Header -->
+                <svg class="assistant-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6ec7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#3d5afe;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 80 L20 30 Q20 20 30 20 L40 20 L50 40 L60 20 L70 20 Q80 20 80 30 L80 80 L70 80 L70 40 L60 60 L50 60 L40 40 L30 60 L30 80 Z" fill="url(#grad2)"/>
+                    <circle cx="50" cy="15" r="6" fill="url(#grad2)"/>
+                </svg>
 
                 <div>
                     <div class="header-title">
-                        My AI
+                        MeenAI
                     </div>
 
                     <div class="online-status">
@@ -90,9 +109,17 @@
 
             <div class="welcome-container">
 
-                <div class="welcome-icon">
-                    ✦
-                </div>
+                <!-- SVG Logo Welcome -->
+                <svg class="welcome-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6ec7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#3d5afe;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 80 L20 30 Q20 20 30 20 L40 20 L50 40 L60 20 L70 20 Q80 20 80 30 L80 80 L70 80 L70 40 L60 60 L50 60 L40 40 L30 60 L30 80 Z" fill="url(#grad3)"/>
+                    <circle cx="50" cy="15" r="6" fill="url(#grad3)"/>
+                </svg>
 
                 <h1>How can I help you?</h1>
 
@@ -106,58 +133,49 @@
         </main>
 
 
-       <!-- INPUT -->
-<div class="input-wrapper">
+        <!-- INPUT -->
+        <div class="input-wrapper">
 
-    <div
-        class="image-preview-container"
-        id="imagePreviewContainer">
-    </div>
+            <div
+                class="image-preview-container"
+                id="imagePreviewContainer">
+            </div>
 
-    <div class="input-container">
+            <div class="input-container">
 
-        <button
-            id="attachButton"
-            class="attach-button"
-            type="button"
-            aria-label="Upload image"
-            title="Upload image">
-            📎
-        </button>
+                <button
+                    id="attachButton"
+                    class="attach-button"
+                    type="button"
+                    aria-label="Upload image"
+                    title="Upload image">
+                    📎
+                </button>
 
-        <input
-            type="file"
-            id="imageInput"
-            accept="image/png,image/jpeg,image/webp"
-            hidden
-        >
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
 
-        <textarea
-            id="messageInput"
-            rows="1"
-            placeholder="Message My AI..."
-            autocomplete="off">
-        </textarea>
+                <textarea
+                    id="messageInput"
+                    rows="1"
+                    placeholder="Message MeenAI..."
+                    autocomplete="off">
+                </textarea>
 
-        <button
-            id="sendButton"
-            class="send-button"
-            type="button"
-            aria-label="Send message">
-            ↑
-        </button>
+                <button
+                    id="sendButton"
+                    class="send-button"
+                    type="button"
+                    aria-label="Send message">
+                    ↑
+                </button>
 
-    </div>
+            </div>
 
-    <div class="input-hint">
-        <span>Enter to send</span>
-        <span>•</span>
-        <span>Shift + Enter for new line</span>
-    </div>
-
-</div>
-
-            <!-- HINT -->
             <div class="input-hint">
                 <span>Enter to send</span>
                 <span>•</span>

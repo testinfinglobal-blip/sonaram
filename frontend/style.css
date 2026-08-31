@@ -1467,3 +1467,22 @@ body.dark .chat-context-menu .delete-chat-button {
         right: 4px;
     }
 }
+
+/* SVG Logo Styling */
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.assistant-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.welcome-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}

@@ -14,7 +14,17 @@ from openai import OpenAI
 # =========================================
 
 load_dotenv()
-app = Flask(__name__, static_folder="../frontend", static_url_path="")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.abspath(
+    os.path.join(BASE_DIR, "..", "frontend")
+)
+
+app = Flask(
+    __name__,
+    static_folder=FRONTEND_DIR,
+    static_url_path=""
+)
 
 CORS(app)
 
@@ -26,10 +36,7 @@ CORS(app)
 api_key = os.getenv("OPENROUTER_API_KEY")
 
 if not api_key:
-    raise RuntimeError(
-        "OPENROUTER_API_KEY is missing from .env"
-    )
-
+    raise RuntimeError("OPENROUTER_API_KEY is missing")
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -38,12 +45,10 @@ client = OpenAI(
 
 
 # =========================================
-# MODEL
+# MODELS
 # =========================================
 
 CHAT_MODEL = "openrouter/auto"
-
-# Vision model
 VISION_MODEL = "google/gemini-2.5-flash"
 
 
@@ -51,7 +56,7 @@ VISION_MODEL = "google/gemini-2.5-flash"
 # DATABASE
 # =========================================
 
-DATABASE = "chat_history.db"
+DATABASE = os.path.join(BASE_DIR, "chat_history.db")
 
 
 def get_connection():
@@ -91,9 +96,15 @@ init_database()
 # =========================================
 # HOME
 # =========================================
+
 @app.route("/")
 def home():
-    return send_from_directory("../frontend", "index.html")
+
+    return send_from_directory(
+        FRONTEND_DIR,
+        "index.html"
+    )
+
 
 # =========================================
 # HEALTH
@@ -122,7 +133,10 @@ def new_chat():
     cursor = connection.cursor()
 
     cursor.execute(
-        "INSERT INTO chats (id, title) VALUES (?, ?)",
+        """
+        INSERT INTO chats (id, title)
+        VALUES (?, ?)
+        """,
         (chat_id, "New Chat")
     )
 
@@ -178,12 +192,15 @@ def get_messages(chat_id):
     connection = get_connection()
     cursor = connection.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT role, message
         FROM messages
         WHERE chat_id = ?
         ORDER BY id ASC
-    """, (chat_id,))
+        """,
+        (chat_id,)
+    )
 
     messages = cursor.fetchall()
 
@@ -191,11 +208,11 @@ def get_messages(chat_id):
 
     result = []
 
-    for message in messages:
+    for role, message in messages:
 
         result.append({
-            "role": message[0],
-            "message": message[1]
+            "role": role,
+            "message": message
         })
 
     return jsonify(result)
@@ -208,7 +225,7 @@ def get_messages(chat_id):
 @app.route("/chat", methods=["POST"])
 def chat():
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if not data:
 
@@ -231,18 +248,21 @@ def chat():
             "error": "Message is required"
         }), 400
 
-
     try:
 
-        # ---------------------------------
+        # =================================
         # CHECK CHAT
-        # ---------------------------------
+        # =================================
 
         connection = get_connection()
         cursor = connection.cursor()
 
         cursor.execute(
-            "SELECT id FROM chats WHERE id = ?",
+            """
+            SELECT id
+            FROM chats
+            WHERE id = ?
+            """,
             (chat_id,)
         )
 
@@ -257,9 +277,9 @@ def chat():
             }), 404
 
 
-        # ---------------------------------
+        # =================================
         # SAVE USER MESSAGE
-        # ---------------------------------
+        # =================================
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -277,9 +297,9 @@ def chat():
         connection.close()
 
 
-        # ---------------------------------
+        # =================================
         # GET HISTORY
-        # ---------------------------------
+        # =================================
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -299,9 +319,9 @@ def chat():
         connection.close()
 
 
-        # ---------------------------------
+        # =================================
         # BUILD OPENROUTER MESSAGES
-        # ---------------------------------
+        # =================================
 
         messages = []
 
@@ -322,25 +342,49 @@ def chat():
                 })
 
 
-        # ---------------------------------
+        print("=================================")
+        print("SENDING TO OPENROUTER")
+        print("MODEL:", CHAT_MODEL)
+        print("MESSAGES:", len(messages))
+        print("=================================")
+
+
+        # =================================
         # OPENROUTER REQUEST
-        # ---------------------------------
+        # =================================
 
         response = client.chat.completions.create(
             model=CHAT_MODEL,
-            messages=messages
+            messages=messages,
+            temperature=0.7
         )
 
 
-        ai_response = (
-            response.choices[0].message.content
-            or "AI response nahi mila."
-        )
+        # =================================
+        # EXTRACT RESPONSE
+        # =================================
+
+        if not response.choices:
+
+            raise RuntimeError(
+                "OpenRouter returned no choices"
+            )
+
+        ai_response = response.choices[0].message.content
 
 
-        # ---------------------------------
+        if not ai_response:
+
+            ai_response = "AI response nahi mila."
+
+
+        print("AI RESPONSE:")
+        print(ai_response)
+
+
+        # =================================
         # SAVE AI RESPONSE
-        # ---------------------------------
+        # =================================
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -358,15 +402,19 @@ def chat():
         connection.close()
 
 
-        # ---------------------------------
+        # =================================
         # CREATE CHAT TITLE
-        # ---------------------------------
+        # =================================
 
         connection = get_connection()
         cursor = connection.cursor()
 
         cursor.execute(
-            "SELECT title FROM chats WHERE id = ?",
+            """
+            SELECT title
+            FROM chats
+            WHERE id = ?
+            """,
             (chat_id,)
         )
 
@@ -401,8 +449,11 @@ def chat():
 
     except Exception as error:
 
-        print("OPENROUTER ERROR:")
-        print(error)
+        print("=================================")
+        print("OPENROUTER ERROR")
+        print(type(error).__name__)
+        print(str(error))
+        print("=================================")
 
         return jsonify({
             "error": "AI request failed",
@@ -411,7 +462,7 @@ def chat():
 
 
 # =========================================
-# ANALYZE UPLOADED IMAGE
+# ANALYZE IMAGE
 # =========================================
 
 @app.route("/analyze-image", methods=["POST"])
@@ -423,9 +474,7 @@ def analyze_image():
             "error": "Image is required"
         }), 400
 
-
     image = request.files["image"]
-
 
     if image.filename == "":
 
@@ -433,15 +482,9 @@ def analyze_image():
             "error": "No image selected"
         }), 400
 
-
     try:
 
-        # ---------------------------------
-        # READ IMAGE
-        # ---------------------------------
-
         image_bytes = image.read()
-
 
         if not image_bytes:
 
@@ -449,38 +492,22 @@ def analyze_image():
                 "error": "Uploaded image is empty"
             }), 400
 
-
-        # ---------------------------------
-        # MIME TYPE
-        # ---------------------------------
-
         mime_type = image.mimetype or "image/jpeg"
-
-
-        # ---------------------------------
-        # BASE64 IMAGE
-        # ---------------------------------
 
         image_base64 = base64.b64encode(
             image_bytes
         ).decode("utf-8")
-
 
         image_data_url = (
             f"data:{mime_type};base64,{image_base64}"
         )
 
 
-        # ---------------------------------
-        # OPENROUTER VISION REQUEST
-        # ---------------------------------
-
         response = client.chat.completions.create(
 
             model=VISION_MODEL,
 
             messages=[
-
                 {
                     "role": "user",
 
@@ -488,7 +515,6 @@ def analyze_image():
 
                         {
                             "type": "text",
-
                             "text":
                                 "Analyze this image and "
                                 "describe what you see clearly."
@@ -504,10 +530,15 @@ def analyze_image():
 
                     ]
                 }
-
             ]
         )
 
+
+        if not response.choices:
+
+            raise RuntimeError(
+                "Vision model returned no choices"
+            )
 
         ai_response = (
             response.choices[0].message.content
@@ -522,8 +553,11 @@ def analyze_image():
 
     except Exception as error:
 
-        print("IMAGE ANALYSIS ERROR:")
-        print(error)
+        print("=================================")
+        print("IMAGE ANALYSIS ERROR")
+        print(type(error).__name__)
+        print(str(error))
+        print("=================================")
 
         return jsonify({
             "error": "Image analysis failed",
@@ -532,27 +566,16 @@ def analyze_image():
 
 
 # =========================================
-# RUN SERVER
-# =========================================
-
-if __name__ == "__main__":
-
-    app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True
-    )
-
- # =========================================
 # RENAME CHAT
 # =========================================
 
 @app.route("/chats/<chat_id>/rename", methods=["PUT"])
 def rename_chat(chat_id):
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if not data:
+
         return jsonify({
             "error": "Request body is missing"
         }), 400
@@ -560,6 +583,7 @@ def rename_chat(chat_id):
     new_title = data.get("title", "").strip()
 
     if not new_title:
+
         return jsonify({
             "error": "Chat title is required"
         }), 400
@@ -570,11 +594,16 @@ def rename_chat(chat_id):
     cursor = connection.cursor()
 
     cursor.execute(
-        "SELECT id FROM chats WHERE id = ?",
+        """
+        SELECT id
+        FROM chats
+        WHERE id = ?
+        """,
         (chat_id,)
     )
 
     if not cursor.fetchone():
+
         connection.close()
 
         return jsonify({
@@ -611,24 +640,37 @@ def delete_chat(chat_id):
     cursor = connection.cursor()
 
     cursor.execute(
-        "SELECT id FROM chats WHERE id = ?",
+        """
+        SELECT id
+        FROM chats
+        WHERE id = ?
+        """,
         (chat_id,)
     )
 
     if not cursor.fetchone():
+
         connection.close()
 
         return jsonify({
             "error": "Chat not found"
         }), 404
 
+
     cursor.execute(
-        "DELETE FROM messages WHERE chat_id = ?",
+        """
+        DELETE FROM messages
+        WHERE chat_id = ?
+        """,
         (chat_id,)
     )
 
+
     cursor.execute(
-        "DELETE FROM chats WHERE id = ?",
+        """
+        DELETE FROM chats
+        WHERE id = ?
+        """,
         (chat_id,)
     )
 
@@ -647,8 +689,12 @@ def delete_chat(chat_id):
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get("PORT", 5000)
+    )
+
     app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True
+        host="0.0.0.0",
+        port=port,
+        debug=False
     )

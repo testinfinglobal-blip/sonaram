@@ -91,10 +91,10 @@ async function createNewChat() {
 
         clearChat();
 
-        // addMessage(
-        //     "Hello! 👋 I'm your AI assistant.\n\nHow can I help you?",
-        //     "ai-message"
-        // );
+        addMessage(
+            "Hello! 👋 I'm your AI assistant.\n\nHow can I help you?",
+            "ai-message"
+        );
 
         await loadChats();
 
